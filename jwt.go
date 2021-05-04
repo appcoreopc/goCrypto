@@ -19,7 +19,6 @@ func (j *JWT) Decode(token string) []string {
 
 	for _, str := range stringContentArray[0:2] {
 		fmt.Println(str)
-		//data, err := base64.StdEncoding.DecodeString("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ")
 		data, err := base64.StdEncoding.DecodeString(str)
 		if err != nil {
 			fmt.Println("error decoding the given base64")
