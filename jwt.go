@@ -6,24 +6,28 @@ import (
 	"strings"
 )
 
+const Jwt_Delimiter = "."
+
 type JWT struct {
 }
 
 // Json parse // json url decode // string split //
 func (j *JWT) Decode(token string) []string {
 
-	stringContentArray := strings.Split(token, ".")
+	stringContentArray := strings.Split(token, Jwt_Delimiter)
+	jwtHeader := make([]string, 2)
 
-	for str := range stringContentArray {
-
-		data, err := base64.StdEncoding.DecodeString("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")
+	for _, str := range stringContentArray[0:2] {
+		fmt.Println(str)
+		//data, err := base64.StdEncoding.DecodeString("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ")
+		data, err := base64.StdEncoding.DecodeString(str)
 		if err != nil {
-			return []string{}
+			fmt.Println("error decoding the given base64")
+			//return []strings{}
 		}
-		fmt.Printf("%s\n", data)
-		fmt.Print(str)
+		jwtHeader = append(jwtHeader, string(data))
+		fmt.Printf("%s - decoded\n", data)
+		//fmt.Print(str)
 	}
-
-	return []string{}
-
+	return jwtHeader
 }
