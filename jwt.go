@@ -6,8 +6,8 @@ type JWT struct {
 }
 
 // Json parse // json url decode // string split //
-func (j *JWT) Decode(token string) {
+func (j *JWT) Decode(token string) []string {
 
-	strings.Split(token, ".")
+	return strings.Split(token, ".")
 
 }
