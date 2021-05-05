@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
@@ -10,9 +11,14 @@ import (
 const Jwt_Delimiter = "."
 
 type JWT struct {
-	secretKey  string
-	jwtHeader  string
-	jwtPayLoad string
+	Token      string
+	SecretKey  string
+	JwtHeader  string
+	JwtPayLoad string
+}
+
+func NewJWT(tokenString string) *JWT {
+	return &JWT{Token: tokenString}
 }
 
 // Json parse // json url decode // string split //
@@ -21,11 +27,11 @@ func (j *JWT) Decode(token string) {
 	stringContentArray := strings.Split(token, Jwt_Delimiter)
 	//jwtHeader := make([]string, 2)
 
-	j.jwtHeader = j.decode(stringContentArray[0])
-	j.jwtPayLoad = j.decode(stringContentArray[1])
+	j.JwtHeader = j.decode(stringContentArray[0])
+	j.JwtPayLoad = j.decode(stringContentArray[1])
 
-	fmt.Println(j.jwtHeader)
-	fmt.Println(j.jwtPayLoad)
+	fmt.Println(j.JwtHeader)
+	fmt.Println(j.JwtPayLoad)
 
 	// data, err := base64.StdEncoding.DecodeString(stringContentArray[0])
 	// if (err != nil) {
@@ -60,18 +66,24 @@ func (j *JWT) decode(token string) string {
 // 	base64UrlEncode(payload),
 // 	1000
 // )
-func (j *JWT) VerifyToken() [32]byte {
+func (j *JWT) VerifyToken() string {
 
-	jwtHeader := base64.StdEncoding.EncodeToString([]byte(j.jwtHeader))
+	jwtHeader := base64.StdEncoding.EncodeToString([]byte(j.JwtHeader))
 	fmt.Println(jwtHeader)
 
-	jwtPayLoad := base64.StdEncoding.EncodeToString([]byte(j.jwtPayLoad))
+	jwtPayLoad := base64.StdEncoding.EncodeToString([]byte(j.JwtPayLoad))
 	fmt.Println(jwtPayLoad)
 
 	jwtContentAsString := jwtHeader + "." +
-		jwtPayLoad + "," +
-		j.secretKey
+		jwtPayLoad + ","
 
-	validToken := sha256.Sum256([]byte(jwtContentAsString))
+	validToken := j.ComputeHmac256(jwtContentAsString, j.SecretKey)
 	return validToken
+}
+
+func (j *JWT) ComputeHmac256(message string, secret string) string {
+	key := []byte(secret)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(message))
+	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
