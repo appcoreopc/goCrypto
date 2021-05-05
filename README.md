@@ -9,6 +9,8 @@ To build :-
 go build . 
 
 
+Some references 
+
 https://github.com/zkcrypto/bls12_381/blob/main/src/lib.rs
 
 https://medium.com/cryptoadvance/bls-signatures-better-than-schnorr-5a7fe30ea716
